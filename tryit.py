@@ -1,7 +1,8 @@
+from local_store import get_cache
 from store import get_client, store, get
 
 
-LOCAL_CACHE = {}
+LOCAL_CACHE = get_cache('local_cache.txt')
 normalize_url = lambda url: url
 
 
