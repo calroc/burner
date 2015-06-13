@@ -1,4 +1,4 @@
-from local_store import get_cache
+from local_cache import get_cache
 from store import get_client, store, get
 
 
