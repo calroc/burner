@@ -31,5 +31,5 @@ class LocalCache(dict):
   def __setitem__(self, tag, url):
     dict.__setitem__(self, tag, url)
     if len(self) < MAX_SIZE:
-      with open(self.path, 'w') as data:
+      with open(self.path, 'a') as data:
         print >> data, tag, url
