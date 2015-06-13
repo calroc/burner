@@ -26,10 +26,10 @@ class LocalCache(dict):
             tag, url = line.split()
           except:
             continue
-          dict.__setattr__(self, tag, url)
+          dict.__setitem__(self, tag, url)
 
-  def __setattr__(self, tag, url):
-    dict.__setattr__(self, tag, url)
+  def __setitem__(self, tag, url):
+    dict.__setitem__(self, tag, url)
     if len(self) < MAX_SIZE:
       with open(self.path, 'w') as data:
         print >> data, tag, url
