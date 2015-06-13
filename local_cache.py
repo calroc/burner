@@ -26,7 +26,7 @@ class LocalCache(dict):
             tag, url = line.split()
           except:
             continue
-          dict.__setitem__(self, tag, url)
+          dict.__setitem__(self, url, tag)
 
   def __setitem__(self, url, tag):
     dict.__setitem__(self, url, tag)
