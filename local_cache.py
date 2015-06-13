@@ -17,8 +17,7 @@ def get_cache(path):
 class LocalCache(dict):
 
   def __init__(self, path):
-    path = abspath(path)
-    self.path = path
+    self.path = path = abspath(path)
     if exists(path):
       with open(path) as data:
         for line in data:
