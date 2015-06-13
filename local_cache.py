@@ -28,8 +28,8 @@ class LocalCache(dict):
             continue
           dict.__setitem__(self, tag, url)
 
-  def __setitem__(self, tag, url):
-    dict.__setitem__(self, tag, url)
+  def __setitem__(self, url, tag):
+    dict.__setitem__(self, url, tag)
     if len(self) < MAX_SIZE:
       with open(self.path, 'a') as data:
         print >> data, tag, url
