@@ -1,5 +1,5 @@
 from memcache import Client
-from .tagger import tag_for
+from tagger import tag_for
 
 
 def get_client(urls):
