@@ -1,6 +1,5 @@
 from traceback import format_exc
 from wsgiref.simple_server import make_server
-from werkzeug.wrappers import Request
 
 
 def posting(environ):
@@ -24,14 +23,12 @@ def err500(start_response, message):
 def ok200(start_response, response):
   start(start_response, '200 OK', 'text/plain')
   return response
-
+  
 
 class Server(object):
 
-  def __init__(self):
-    self.router = {
-      'register': self.register,
-      }
+  def __init__(self, **router):
+    self.router = router
 
   def handle_request(self, environ, start_response):
     environ['path'] = path = self.pather(environ['PATH_INFO'])
@@ -44,10 +41,6 @@ class Server(object):
 
   def pather(self, path_info):
     return path_info.strip('/')
-
-  def register(self, environ):
-    request = Request(environ)
-    return 'hi there! ' + str(request.args.get('urly'))
 
   def __call__(self, environ, start_response):
     try:
@@ -62,8 +55,3 @@ def run(app, host='', port=8000):
     httpd.serve_forever()
   except KeyboardInterrupt:
     pass
-
-
-if __name__ == '__main__':
-  run(Server())
-
