@@ -57,11 +57,15 @@ def make_reg_handler(cache, store):
 def make_get_handler(cache, get):
 
   def handle_lookup(environ):
+    print 1
     request = Request(environ)
+    print 2
     tag = request.args.get('tag')
+    print 3, tag
     if not tag: 
       return 'no tag'
     url = lookup(tag, cache, get)
+    print 4, url
     if not url:
       return 'untagged for some reason'
     return url
