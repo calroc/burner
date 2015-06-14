@@ -27,8 +27,8 @@ def normalize_url(url):
     result.scheme in ('http', 'https')
     and not (result.params or result.query or result.fragment)
     ):
-    return result.geturl()
-
+    url = result.geturl()
+    return url if url.endswith('/') else url + '/'
 
 if __name__ == '__main__':
   import pprint, burnerconf
