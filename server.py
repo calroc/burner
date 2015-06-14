@@ -34,16 +34,15 @@ class Server(object):
 
   def handle_request(self, environ, start_response):
     environ['path'] = path = self.pather(environ['PATH_INFO'])
-    handler = self.router.get(path, self.default_handler)
+    try:
+      handler = self.router[path]
+    except KeyError:
+      return err404(start_response, path)
     response = handler(environ)
     return ok200(start_response, response)
 
   def pather(self, path_info):
     return path_info.strip('/')
-
-  def default_handler(self, environ):
-    path = environ['path']
-    return err404(start_response, path)
 
   def register(self, environ):
     return 'hi there!'
