@@ -16,6 +16,16 @@ def register(url, cache, store, local=LOCAL_CACHE):
   return tag
 
 
+def lookup(tag, cache, get, local=LOCAL_CACHE):
+  url = local.inverted.get(tag)
+  if not url:
+    url = get(cache, tag)
+    if not url:
+      return
+    local[url] = tag
+  return url
+
+
 def normalize_url(url):
   try:
     result = urlparse(url.lower())
@@ -42,3 +52,18 @@ def make_reg_handler(cache, store):
     return tag
 
   return handle_registration
+
+
+def make_get_handler(cache, get):
+
+  def handle_lookup(environ):
+    request = Request(environ)
+    tag = request.args.get('tag')
+    if not tag: 
+      return 'no tag'
+    url = lookup(tag, cache, get)
+    if not url:
+      return 'untagged for some reason'
+    return url
+    
+  return handle_lookup
