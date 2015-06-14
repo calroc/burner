@@ -29,11 +29,19 @@ def normalize_url(url):
 
 
 if __name__ == '__main__':
+  from server import run, Server
+  from handlers import handle_registration
   from store import get_client, store
   import pprint, burnerconf
+
   url = 'http://calroc.webfactional.com/00000000/00000000'
+
   cache = get_client([burnerconf.CACHE_URL])
+
   print register('http://dendritenetwork.com/', cache, store)
   print register(url, cache, store)
   print register('http://dendritenetwork.com/', cache, store)
+
   pprint.pprint(LOCAL_CACHE)
+
+  run(Server(register=handle_registration))
