@@ -1,5 +1,6 @@
 from traceback import format_exc
 from wsgiref.simple_server import make_server
+from werkzeug.wrappers import Request
 
 
 def posting(environ):
@@ -45,7 +46,8 @@ class Server(object):
     return path_info.strip('/')
 
   def register(self, environ):
-    return 'hi there!'
+    request = Request(environ)
+    return 'hi there! ' + str(request.args.get('urly'))
 
   def __call__(self, environ, start_response):
     try:
