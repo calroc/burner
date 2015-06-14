@@ -22,7 +22,7 @@ def err500(start_response, message):
 
 def ok200(start_response, response):
   start(start_response, '200 OK', 'text/plain')
-  return response
+  return [response]
   
 
 class Server(object):
