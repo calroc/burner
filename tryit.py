@@ -37,4 +37,4 @@ if __name__ == '__main__':
   print register('http://dendritenetwork.com/', cache, store)
   print register(url, cache, store)
   print register('http://dendritenetwork.com/', cache, store)
-  pprint(LOCAL_CACHE)
+  pprint.pprint(LOCAL_CACHE)
