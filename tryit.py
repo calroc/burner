@@ -11,9 +11,7 @@ def register(url, cache, store, local=LOCAL_CACHE):
     return
   tag = local.get(url)
   if tag is None:
-    print 'local cache miss', url
-    tag = store(cache, url)
-    local[url] = tag
+    local[url] = tag = store(cache, url)
   return tag
 
 
