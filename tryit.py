@@ -1,9 +1,8 @@
 from urlparse import urlparse
-from local_cache import get_cache
-from store import get_client, store, get
+import local_cache
 
 
-LOCAL_CACHE = get_cache('local_cache.txt')
+LOCAL_CACHE = local_cache.get_cache('local_cache.txt')
 
 
 def register(url, cache, store, local=LOCAL_CACHE):
@@ -30,7 +29,9 @@ def normalize_url(url):
     url = result.geturl()
     return url if url.endswith('/') else url + '/'
 
+
 if __name__ == '__main__':
+  from store import get_client, store
   import pprint, burnerconf
   url = 'http://calroc.webfactional.com/00000000/00000000'
   cache = get_client([burnerconf.CACHE_URL])
