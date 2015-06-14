@@ -15,6 +15,11 @@ def err404(start_response, message):
   return [str(message)]
 
 
+def err500(start_response, message):
+  start(start_response, '500 Internal Server Error', 'text/plain')
+  return [str(message)]
+
+
 def ok200(start_response, response):
   start(start_response, '200 OK', 'text/plain')
   return response
