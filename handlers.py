@@ -39,32 +39,36 @@ def normalize_url(url):
     return url if url.endswith('/') else url + '/'
 
 
-def make_reg_handler(cache, store):
+class RegistrationHandler(object):
 
-  def handle_registration(environ):
+  def __init__(self, cache, store):
+    self.cache = cache
+    self.store = store
+
+  def __call__(self, environ):
     request = Request(environ)
     url = str(request.args.get('urly'))
     if not url:
       return 'no urly'
-    tag = register(url, cache, store)
+    tag = register(url, self.cache, self.store)
     if not tag:
       return 'untaggable for some reason'
     return tag
 
-  return handle_registration
 
+class GetHandler(object):
 
-def make_get_handler(cache, get):
+  def __init__(self, cache, get):
+    self.cache = cache
+    self.get = get
 
-  def handle_lookup(environ):
+  def __call__(self, environ):
     request = Request(environ)
     tag = str(request.args.get('tag'))
     if not tag:
       return 'no tag'
     tag = str(tag)
-    url = lookup(tag, cache, get)
+    url = lookup(tag, self.cache, self.get)
     if not url:
       return 'untagged for some reason'
     return url
-    
-  return handle_lookup
