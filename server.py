@@ -15,6 +15,11 @@ def err404(start_response, message):
   return [str(message)]
 
 
+def err400(start_response, message):
+  start(start_response, '400 Bad Request', 'text/plain')
+  return [str(message)]
+
+
 def err500(start_response, message):
   start(start_response, '500 Internal Server Error', 'text/plain')
   return [str(message)]
@@ -23,7 +28,11 @@ def err500(start_response, message):
 def ok200(start_response, response):
   start(start_response, '200 OK', 'text/plain')
   return [response]
-  
+
+
+class Error400(Exception):
+  pass
+
 
 class Server(object):
 
@@ -45,6 +54,8 @@ class Server(object):
   def __call__(self, environ, start_response):
     try:
       return self.handle_request(environ, start_response)
+    except Error400, e:
+      return err400(start_response, e.message)
     except:
       return err500(start_response, format_exc())
 

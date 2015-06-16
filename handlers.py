@@ -1,5 +1,6 @@
 from urlparse import urlparse
 from werkzeug.wrappers import Request
+from server import Error400
 import local_cache
 
 
@@ -47,12 +48,13 @@ class RegistrationHandler(object):
 
   def __call__(self, environ):
     request = Request(environ)
-    url = str(request.args.get('urly'))
+    url = request.args.get('urly')
     if not url:
-      return 'no urly'
+      raise Error400('no urly')
+    url = str(url)
     tag = register(url, self.cache, self.store)
     if not tag:
-      return 'untaggable for some reason'
+      raise Error400('untaggable for some reason')
     return tag
 
 
@@ -64,11 +66,11 @@ class GetHandler(object):
 
   def __call__(self, environ):
     request = Request(environ)
-    tag = str(request.args.get('tag'))
+    tag = request.args.get('tag')
     if not tag:
-      return 'no tag'
+      raise Error400('no tag')
     tag = str(tag)
     url = lookup(tag, self.cache, self.get)
     if not url:
-      return 'untagged for some reason'
+      raise Error400('untagged for some reason')
     return url
