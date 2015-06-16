@@ -31,28 +31,21 @@ class Server(object):
     self.router = router
 
   def handle_request(self, environ, start_response):
-    print 'b'
     environ['path'] = path = self.pather(environ['PATH_INFO'])
-    print 'c'
     try:
       handler = self.router[path]
-      print 'd'
     except KeyError:
-      print 'x'
       return err404(start_response, path)
     response = handler(environ)
-    print 'e'
     return ok200(start_response, response)
 
   def pather(self, path_info):
     return path_info.strip('/')
 
   def __call__(self, environ, start_response):
-    print 'a'
     try:
       return self.handle_request(environ, start_response)
     except:
-      print 'zzz'
       return err500(start_response, format_exc())
 
 
