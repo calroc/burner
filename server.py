@@ -56,6 +56,8 @@ class Server(object):
       return self.handle_request(environ, start_response)
     except Error400, e:
       return err400(start_response, e.message)
+    except KeyboardInterrupt:
+      raise
     except:
       return err500(start_response, format_exc())
 
