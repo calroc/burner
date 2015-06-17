@@ -1,25 +1,26 @@
 from urlparse import urlparse
 from werkzeug.wrappers import Request
+from server import Error400
 import local_cache
 
 
 LOCAL_CACHE = local_cache.get_cache('local_cache.txt')
 
 
-def register(url, cache, store, local=LOCAL_CACHE):
+def register(url, store):
   url = normalize_url(url)
   if not url:
     return
-  tag = local.get(url)
+  tag = LOCAL_CACHE.get(url)
   if tag is None:
-    local[url] = tag = store(cache, url)
+    LOCAL_CACHE[url] = tag = store(url)
   return tag
 
 
-def lookup(tag, cache, get, local=LOCAL_CACHE):
-  url = local.inverted.get(tag)
+def lookup(tag, get):
+  url = LOCAL_CACHE.inverted.get(tag)
   if not url:
-    url = get(cache, tag)
+    url = get(tag)
     if not url:
       return
     local[url] = tag
@@ -39,35 +40,35 @@ def normalize_url(url):
     return url if url.endswith('/') else url + '/'
 
 
-def make_reg_handler(cache, store):
+class RegistrationHandler(object):
 
-  def handle_registration(environ):
+  def __init__(self, store):
+    self.store = store
+
+  def __call__(self, environ):
     request = Request(environ)
     url = request.args.get('urly')
-    if not url: 
-      return 'no urly'
-    tag = register(url, cache, store)
+    if not url:
+      raise Error400('no urly')
+    url = str(url)
+    tag = register(url, self.store)
     if not tag:
-      return 'untaggable for some reason'
+      raise Error400('untaggable for some reason')
     return tag
 
-  return handle_registration
 
+class GetHandler(object):
 
-def make_get_handler(cache, get):
+  def __init__(self, get):
+    self.get = get
 
-  def handle_lookup(environ):
-    print 'handle_lookup'
+  def __call__(self, environ):
     request = Request(environ)
     tag = request.args.get('tag')
-    print 1, repr(tag)
-    if not tag: 
-      return 'no tag'
+    if not tag:
+      raise Error400('no tag')
     tag = str(tag)
-    url = lookup(tag, cache, get)
-    print 2, repr(url)
+    url = lookup(tag, self.get)
     if not url:
-      return 'untagged for some reason'
+      raise Error400('untagged for some reason')
     return url
-    
-  return handle_lookup
