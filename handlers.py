@@ -7,20 +7,20 @@ import local_cache
 LOCAL_CACHE = local_cache.get_cache('local_cache.txt')
 
 
-def register(url, cache, store, local=LOCAL_CACHE):
+def register(url, store):
   url = normalize_url(url)
   if not url:
     return
-  tag = local.get(url)
+  tag = LOCAL_CACHE.get(url)
   if tag is None:
-    local[url] = tag = store(cache, url)
+    LOCAL_CACHE[url] = tag = store(url)
   return tag
 
 
-def lookup(tag, cache, get, local=LOCAL_CACHE):
-  url = local.inverted.get(tag)
+def lookup(tag, get):
+  url = LOCAL_CACHE.inverted.get(tag)
   if not url:
-    url = get(cache, tag)
+    url = get(tag)
     if not url:
       return
     local[url] = tag
@@ -42,8 +42,7 @@ def normalize_url(url):
 
 class RegistrationHandler(object):
 
-  def __init__(self, cache, store):
-    self.cache = cache
+  def __init__(self, store):
     self.store = store
 
   def __call__(self, environ):
@@ -52,7 +51,7 @@ class RegistrationHandler(object):
     if not url:
       raise Error400('no urly')
     url = str(url)
-    tag = register(url, self.cache, self.store)
+    tag = register(url, self.store)
     if not tag:
       raise Error400('untaggable for some reason')
     return tag
@@ -60,8 +59,7 @@ class RegistrationHandler(object):
 
 class GetHandler(object):
 
-  def __init__(self, cache, get):
-    self.cache = cache
+  def __init__(self, get):
     self.get = get
 
   def __call__(self, environ):
@@ -70,7 +68,7 @@ class GetHandler(object):
     if not tag:
       raise Error400('no tag')
     tag = str(tag)
-    url = lookup(tag, self.cache, self.get)
+    url = lookup(tag, self.get)
     if not url:
       raise Error400('untagged for some reason')
     return url
