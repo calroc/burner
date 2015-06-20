@@ -23,7 +23,7 @@ def lookup(tag, get):
     url = get(tag)
     if not url:
       return
-    local[url] = tag
+    LOCAL_CACHE[url] = tag
   return url
 
 
