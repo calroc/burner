@@ -21,11 +21,7 @@ class LocalCache(dict):
     self.inverted = {}
     if exists(path):
       with open(path) as data:
-        for line in data:
-          try:
-            tag, url = line.split()
-          except:
-            continue
+        for tag, url in self.read(data):
           dict.__setitem__(self, url, tag)
           self.inverted[tag] = url
 
@@ -36,3 +32,12 @@ class LocalCache(dict):
       if len(self) < MAX_SIZE:
         with open(self.path, 'a') as data:
           print >> data, tag, url
+
+  @staticmethod
+  def read(lines):
+    for line in lines:
+      try:
+        tag, url = line.split()
+      except:
+        continue
+      yield tag, url
