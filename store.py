@@ -17,7 +17,7 @@ def get(cache, key):
 
 
 if __name__ == '__main__':
-  url = 'http://calroc.webfactional.com/00000000/00000000'
+  url = 'http://calroc.webfactional.com/00000000/00000000/'
   CACHE_URL = 'dn001.qgt6kc.0001.usw1.cache.amazonaws.com:11211'
   cache = get_client([CACHE_URL])
   tag = store(cache, url)
