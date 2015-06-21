@@ -6,24 +6,34 @@ from boto.dynamodb2.table import Table
 BATCH_LIMIT = 25
 SLEEP_SECONDS = 1
 DONE = 'done'
+APPENDERS = {}
+
+
+def get_appender(table_name):
+  try:
+    return APPENDERS[table_name]
+  except KeyError:
+    APPENDERS[table_name] = a = make_batcher_thread(table_name)
+    return a
 
 
 def make_batcher_thread(table_name):
   lock = Lock()
   buff = []
-  regy = Table(table_name)
-  thread = Thread(target=batcher, args=(lock, buff, regy))
+  thread = Thread(target=batcher, args=(lock, buff, table_name))
   thread.start()
   def enqueue_datum(datum):
+    if not thread.is_alive():
+      raise RuntimeError('thread is dead')
     append(lock, buff, datum)
   return enqueue_datum
 
 
-def batcher(lock, data, table):
+def batcher(lock, data, table_name):
+  table = Table(table_name)
   while True:
     local_data = grab(lock, data)
     if not batch_and_send(local_data, table):
-      print 'Done.'
       break
 
 
@@ -52,17 +62,21 @@ def batch_and_send(local_data, table):
   else:
     res = False  # Quit after this.
     del local_data[i:]  # Ignore data after None.
-  for batch in by_twenty_fives(local_data):
+  send_all(table, local_data)
+  return res
+
+
+def send_all(table, data):
+  for batch in chop(local_data):
     send_batch(batch, table)
     sleep(SLEEP_SECONDS)
   else:
     sleep(SLEEP_SECONDS)  # Sleep at least once per loop.
-  return res
 
 
-def by_twenty_fives(data):
+def chop(data, by=BATCH_LIMIT):
   while data:
-    batch, data = data[:25], data[25:]
+    batch, data = data[:by], data[by:]
     yield batch
 
 
@@ -70,14 +84,11 @@ def send_batch(batch, table):
   with table.batch_write() as table_batch:
     for datum in batch:
       table_batch.put_item(data=datum)
-      print 'sending', datum
   # Implicit send occurs here.
 
 
 def example():
-  a = make_batcher_thread('regy')
+  a = get_appender('regy')
   for n in range(55):
     a(n)
   a(DONE)
-  print 'Queued!'
-
