@@ -7,7 +7,7 @@ from boto.dynamodb2.exceptions import (
 
 
 def T():
-  return int(round(time(), 3) * 3)
+  return int(round(time(), 3) * 1000)
 
 
 def fetch(table, tag):
@@ -16,7 +16,7 @@ def fetch(table, tag):
   except ItemNotFound:
     pass
   else:
-    return item['url']
+    return str(item['url'])
 
 
 def write_datum(table, tag, url):

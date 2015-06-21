@@ -18,8 +18,7 @@ def normalize_url(url):
     result.scheme in ('http', 'https')
     and not (result.params or result.query or result.fragment)
     ):
-    url = result.geturl()
-    return url if url.endswith('/') else url + '/'
+    return str(result.geturl())
 
 
 class RegistrationHandler(object):
@@ -51,7 +50,7 @@ class RegistrationHandler(object):
     url = request.args.get('urly')
     if not url:
       raise Error400('no urly')
-    tag = self.register(url)
+    tag = str(self.register(url))
     if not tag:
       raise Error400('untaggable for some reason')
     return tag
@@ -63,7 +62,7 @@ class GetHandler(object):
     self.cache = cache
     self.table = table
 
-  def lookup(tag):
+  def lookup(self, tag):
     tag = str(tag)
     url = LOCAL_CACHE.inverted.get(tag)
     if url:
@@ -83,7 +82,7 @@ class GetHandler(object):
     tag = request.args.get('tag')
     if not tag:
       raise Error400('no tag')
-    url = self.lookup(tag)
+    url = str(self.lookup(tag))
     if not url:
       raise Error400('untagged for some reason')
     return url
