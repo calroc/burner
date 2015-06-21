@@ -21,18 +21,25 @@ class LocalCache(dict):
     self.inverted = {}
     if exists(path):
       with open(path) as data:
-        for line in data:
-          try:
-            tag, url = line.split()
-          except:
-            continue
-          dict.__setitem__(self, url, tag)
-          self.inverted[tag] = url
+        for tag, url in self.read(data):
+          self._set(tag, url)
 
   def __setitem__(self, url, tag):
     if url not in self:
-      dict.__setitem__(self, url, tag)
-      self.inverted[tag] = url
+      self._set(tag, url)
       if len(self) < MAX_SIZE:
         with open(self.path, 'a') as data:
           print >> data, tag, url
+
+  def _set(self, tag, url):
+    dict.__setitem__(self, url, tag)
+    self.inverted[tag] = url
+
+  @staticmethod
+  def read(lines):
+    for line in lines:
+      try:
+        tag, url = line.split()
+      except:
+        continue
+      yield tag, url

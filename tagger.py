@@ -18,5 +18,5 @@ def tag_for(s):
 
 
 if __name__ == '__main__':
-  url = 'http://calroc.webfactional.com/00000000/00000000'
+  url = 'http://calroc.webfactional.com/00000000/00000000/'
   print url, tag_for(url)
