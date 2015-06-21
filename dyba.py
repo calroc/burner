@@ -1,5 +1,5 @@
 from threading import Lock, Thread
-from time import sleep
+from time import sleep, time
 from boto.dynamodb2.table import Table
 
 
@@ -7,6 +7,14 @@ BATCH_LIMIT = 25
 SLEEP_SECONDS = 1
 DONE = 'done'
 APPENDERS = {}
+
+
+def write_datum(appender, tag, url):
+  appender({
+    'tag': tag,
+    'url': url,
+    'when': time(),
+    })
 
 
 def get_appender(table_name):
@@ -85,10 +93,3 @@ def send_batch(batch, table):
     for datum in batch:
       table_batch.put_item(data=datum)
   # Implicit send occurs here.
-
-
-def example():
-  a = get_appender('regy')
-  for n in range(55):
-    a(n)
-  a(DONE)
