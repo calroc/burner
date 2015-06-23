@@ -1,4 +1,5 @@
-from db import Table
+#!/usr/bin/env python
+from boto.dynamodb2.table import Table
 from server import run, Server
 from handlers import RegistrationHandler, GetHandler
 from store import get_client, store as _store, get as _get
