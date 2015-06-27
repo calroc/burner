@@ -13,9 +13,15 @@ class Page(Resource):
     req.finish()
 
   def render_GET(self, request):
-    d = deferLater(reactor, 5, lambda: (request, 'Hello there!'))
-    d.addCallback(self._fin)
+    self.get(request).addCallback(self._fin)
     return NOT_DONE_YET
+
+  def get(self, request):
+    '''
+    Create and return a deferred that should be triggered with a two-
+    tuple containing the request object and the text response.
+    '''
+    return deferLater(reactor, 5, lambda: (request, 'Hello there!'))
 
 
 factory = Site(Page())
