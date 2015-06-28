@@ -27,4 +27,4 @@ def write_datum(table, tag, url):
       'when': T(),
       })
   except ConditionalCheckFailedException:
-    return False
+    return True
