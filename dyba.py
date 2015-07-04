@@ -75,7 +75,7 @@ def batch_and_send(local_data, table):
 
 
 def send_all(table, data):
-  for batch in chop(local_data):
+  for batch in chop(data):
     send_batch(batch, table)
     sleep(SLEEP_SECONDS)
   else:
