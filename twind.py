@@ -9,7 +9,8 @@ from twisted.web.server import Site, NOT_DONE_YET
 def foo(request, deferred):
   #  resp = str(dir(request)) + '\n\r'
   resp = (request, 'Hello World!')
-  d = deferLater(reactor, 2, lambda: 1 / 0 + deferred.callback(resp))
+  1 / 0
+  d = deferLater(reactor, 2, lambda: deferred.callback(resp))
   d.addErrback(deferred.errback)
 
 
